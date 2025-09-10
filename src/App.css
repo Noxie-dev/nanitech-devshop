@@ -1,0 +1,88 @@
+/* Font imports for futuristic look */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Custom CSS Variables for NANI TECH Theme */
+:root {
+  --radius: 0.625rem;
+  /* NANI TECH Dark Theme Colors */
+  --background: #0C0F16;
+  --foreground: #EAEAEA;
+  --card: #1C1F27;
+  --card-foreground: #EAEAEA;
+  --popover: #1C1F27;
+  --popover-foreground: #EAEAEA;
+  --primary: #00E5FF;
+  --primary-foreground: #0C0F16;
+  --secondary: #14273D;
+  --secondary-foreground: #EAEAEA;
+  --muted: #1C1F27;
+  --muted-foreground: #EAEAEA80;
+  --accent: #E53935;
+  --accent-foreground: #EAEAEA;
+  --destructive: #E53935;
+  --border: #00E5FF33;
+  --input: #0C0F1680;
+  --ring: #00E5FF;
+  --chart-1: #00E5FF;
+  --chart-2: #E53935;
+  --chart-3: #0066CC;
+  --chart-4: #FF6B6B;
+  --chart-5: #14273D;
+  --sidebar: #1C1F27;
+  --sidebar-foreground: #EAEAEA;
+  --sidebar-primary: #00E5FF;
+  --sidebar-primary-foreground: #0C0F16;
+  --sidebar-accent: #E53935;
+  --sidebar-accent-foreground: #EAEAEA;
+  --sidebar-border: #00E5FF33;
+  --sidebar-ring: #00E5FF;
+}
+
+.dark {
+  /* NANI TECH Dark Theme Colors - Same as root for consistency */
+  --background: #0C0F16;
+  --foreground: #EAEAEA;
+  --card: #1C1F27;
+  --card-foreground: #EAEAEA;
+  --popover: #1C1F27;
+  --popover-foreground: #EAEAEA;
+  --primary: #00E5FF;
+  --primary-foreground: #0C0F16;
+  --secondary: #14273D;
+  --secondary-foreground: #EAEAEA;
+  --muted: #1C1F27;
+  --muted-foreground: #EAEAEA80;
+  --accent: #E53935;
+  --accent-foreground: #EAEAEA;
+  --destructive: #E53935;
+  --border: #00E5FF33;
+  --input: #0C0F1680;
+  --ring: #00E5FF;
+  --chart-1: #00E5FF;
+  --chart-2: #E53935;
+  --chart-3: #0066CC;
+  --chart-4: #FF6B6B;
+  --chart-5: #14273D;
+  --sidebar: #1C1F27;
+  --sidebar-foreground: #EAEAEA;
+  --sidebar-primary: #00E5FF;
+  --sidebar-primary-foreground: #0C0F16;
+  --sidebar-accent: #E53935;
+  --sidebar-accent-foreground: #EAEAEA;
+  --sidebar-border: #00E5FF33;
+  --sidebar-ring: #00E5FF;
+}
+
+/* Base styles moved to index.css */
+
+
+/* Custom NANI TECH Styles moved to index.css */
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', monospace;
+}
+
