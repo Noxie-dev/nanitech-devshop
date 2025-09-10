@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ExternalLink, 
@@ -8,18 +8,52 @@ import {
   Globe, 
   Database,
   Brain,
-  Shield
+  Gamepad2,
+  Play,
+  Pause
 } from 'lucide-react';
 
 const ProjectsSection = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isSlideshowPaused, setIsSlideshowPaused] = useState(false);
+
+  // Tic-Tac-Toe screenshots array
+  const ticTacToeImages = [
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.54.41.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.55.14.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.56.04.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.56.14.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.56.25.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.56.41.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 17.57.49.png",
+    "/TickTechToe-media/Screenshot 2025-09-10 at 18.12.35.png"
+  ];
+
+  // Slideshow effect for Tic-Tac-Toe images
+  useEffect(() => {
+    if (isSlideshowPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === ticTacToeImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 6000); // 6 seconds interval
+
+    return () => clearInterval(interval);
+  }, [ticTacToeImages.length, isSlideshowPaused]);
+
+  // Function to toggle slideshow pause/play
+  const toggleSlideshow = () => {
+    setIsSlideshowPaused(!isSlideshowPaused);
+  };
 
   const categories = [
     { id: 'all', name: 'All Projects', icon: <Code2 className="w-4 h-4" /> },
     { id: 'web', name: 'Web Apps', icon: <Globe className="w-4 h-4" /> },
     { id: 'mobile', name: 'Mobile', icon: <Smartphone className="w-4 h-4" /> },
     { id: 'ai', name: 'AI/ML', icon: <Brain className="w-4 h-4" /> },
-    { id: 'blockchain', name: 'Blockchain', icon: <Shield className="w-4 h-4" /> }
+    { id: 'gaming', name: 'Gaming', icon: <Gamepad2 className="w-4 h-4" /> }
   ];
 
   const projects = [
@@ -50,7 +84,7 @@ const ProjectsSection = () => {
     {
       id: 3,
       title: "CryptoVault Pro",
-      category: "blockchain",
+      category: "gaming",
       description: "Secure cryptocurrency wallet with advanced trading features",
       image: "/api/placeholder/400/300",
       technologies: ["Solidity", "Web3.js", "React", "Node.js"],
@@ -94,6 +128,18 @@ const ProjectsSection = () => {
       demoUrl: "#",
       githubUrl: "#",
       featured: false
+    },
+    {
+      id: 7,
+      title: "Tic-Tac-Toe AI",
+      category: "gaming",
+      description: "Modern Tic-Tac-Toe game with AI opponents featuring three difficulty levels and persistent scoring",
+      image: "slideshow", // Special identifier for slideshow
+      technologies: ["React", "TypeScript", "Vite", "Tailwind CSS", "Shadcn UI", "Lucide React"],
+      status: "Completed",
+      demoUrl: "#",
+      githubUrl: "https://github.com/Noxie-dev/Tic-Tech-Toe-AI-To-The-Bone",
+      featured: true
     }
   ];
 
@@ -110,7 +156,7 @@ const ProjectsSection = () => {
       case 'web': return <Globe className="w-4 h-4" />;
       case 'mobile': return <Smartphone className="w-4 h-4" />;
       case 'ai': return <Brain className="w-4 h-4" />;
-      case 'blockchain': return <Shield className="w-4 h-4" />;
+      case 'gaming': return <Gamepad2 className="w-4 h-4" />;
       default: return <Code2 className="w-4 h-4" />;
     }
   };
@@ -190,12 +236,61 @@ const ProjectsSection = () => {
 
                 {/* Card */}
                 <div className="glass-card rounded-xl overflow-hidden h-full transition-all duration-300 group-hover:border-[#00E5FF]/50">
-                  {/* Project Image Placeholder */}
-                  <div className="relative h-48 bg-gradient-to-br from-[#1C1F27] to-[#14273D] flex items-center justify-center">
-                    <div className="text-6xl text-[#00E5FF]/30">
-                      {getCategoryIcon(project.category)}
-                    </div>
+                  {/* Project Image */}
+                  <div className="relative h-64 bg-gradient-to-br from-[#1C1F27] to-[#14273D] flex items-center justify-center overflow-hidden cursor-pointer" onClick={project.image === "slideshow" ? toggleSlideshow : undefined}>
+                    {project.image === "slideshow" ? (
+                      <AnimatePresence mode="wait">
+                        <motion.img
+                          key={currentImageIndex}
+                          src={ticTacToeImages[currentImageIndex]}
+                          alt={`${project.title} - Screenshot ${currentImageIndex + 1}`}
+                          className="w-full h-full object-contain bg-[#1C1F27]"
+                          initial={{ opacity: 0, scale: 1.1 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        />
+                      </AnimatePresence>
+                    ) : project.image && project.image !== "/api/placeholder/400/300" ? (
+                      <img 
+                        src={project.image} 
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-6xl text-[#00E5FF]/30">
+                        {getCategoryIcon(project.category)}
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0C0F16]/80 to-transparent"></div>
+                    
+                    {/* Slideshow controls and indicators */}
+                    {project.image === "slideshow" && (
+                      <>
+                        {/* Pause/Play button */}
+                        <div className="absolute top-2 right-2 p-2 bg-[#0C0F16]/80 rounded-full backdrop-blur-sm">
+                          {isSlideshowPaused ? (
+                            <Play className="w-4 h-4 text-[#00E5FF]" />
+                          ) : (
+                            <Pause className="w-4 h-4 text-[#00E5FF]" />
+                          )}
+                        </div>
+                        
+                        {/* Slideshow indicator dots */}
+                        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+                          {ticTacToeImages.map((_, index) => (
+                            <div
+                              key={index}
+                              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                index === currentImageIndex 
+                                  ? 'bg-[#00E5FF] scale-125' 
+                                  : 'bg-[#00E5FF]/30'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
                     
                     {/* Overlay with links */}
                     <div className="absolute inset-0 bg-[#0C0F16]/80 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4">

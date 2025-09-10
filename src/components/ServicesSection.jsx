@@ -4,8 +4,8 @@ import {
   Monitor, 
   Smartphone, 
   Cloud, 
-  Database, 
-  Shield, 
+  Layers, 
+  BarChart3, 
   Cpu,
   Globe,
   Zap,
@@ -37,24 +37,24 @@ const ServicesSection = () => {
       color: "from-[#00E5FF] to-[#14273D]"
     },
     { 
-      icon: <Database className="w-8 h-8" />, 
-      title: "Data Engineering", 
-      description: "Advanced data processing and analytics systems",
-      features: ["Big Data Processing", "Real-time Analytics", "Data Warehousing", "ETL Pipelines"],
+      icon: <Layers className="w-8 h-8" />, 
+      title: "SaaS Development", 
+      description: "Modern, intuitive, and innovative SaaS solutions with creative UI design and scalable architecture",
+      features: ["Creative UI Design", "Scalable Backend", "Artificial Intelligence", "Multi-tenant Architecture"],
       color: "from-[#E53935] to-[#0066CC]"
     },
     { 
-      icon: <Shield className="w-8 h-8" />, 
-      title: "Cybersecurity", 
-      description: "Comprehensive security audits and protection solutions",
-      features: ["Security Audits", "Penetration Testing", "Compliance", "Threat Monitoring"],
+      icon: <BarChart3 className="w-8 h-8" />, 
+      title: "Dashboard Development", 
+      description: "Advanced analytics dashboards with smart UI and user-friendly experiences",
+      features: ["Real-time Analytics", "Interactive Visualizations", "Smart UI/UX", "Data Insights"],
       color: "from-[#00E5FF] to-[#E53935]"
     },
     { 
       icon: <Cpu className="w-8 h-8" />, 
       title: "AI Integration", 
       description: "Machine learning and AI-powered features for your applications",
-      features: ["Machine Learning", "Natural Language Processing", "Computer Vision", "Predictive Analytics"],
+      features: ["Machine Learning", "Natural Language Processing", "Computer Vision", "Predictive Analytics", "Algorithms"],
       color: "from-[#FF6B6B] to-[#00E5FF]"
     }
   ];

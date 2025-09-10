@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,19 +18,13 @@ const Navigation = () => {
   }, []);
 
   const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'About', href: '#about' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Contact', href: '#contact' }
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Projects', href: '/projects' },
+    { name: 'Contact', href: '/contact' }
   ];
 
-  const scrollToSection = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
@@ -38,64 +34,68 @@ const Navigation = () => {
         ? 'bg-[#0C0F16]/95 backdrop-blur-xl border-b border-[#00E5FF]/20 shadow-lg shadow-[#00E5FF]/10' 
         : 'bg-transparent'
     }`}>
-      <div className="container mx-auto px-6 py-4">
+      <div className="container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <motion.div 
-            className="flex items-center space-x-3 cursor-pointer"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={() => scrollToSection('#home')}
-          >
-            <div className="relative w-12 h-12">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0066CC] to-[#E53935] rounded-full opacity-40 blur-md"></div>
-              <div className="relative w-full h-full rounded-full bg-gradient-to-r from-[#0066CC] via-transparent to-[#E53935] p-0.5">
-                <div className="w-full h-full bg-[#0C0F16] rounded-full flex items-center justify-center border border-[#00E5FF]/30">
-                  <span className="text-[#00E5FF] font-bold text-xs font-orbitron">NT</span>
-                </div>
-              </div>
-            </div>
+          <Link to="/" className="flex items-center space-x-4 cursor-pointer">
+            <motion.div 
+              className="flex items-center space-x-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+            <img 
+              src="/header-logo.png" 
+              alt="NaniTeck DevShop Logo" 
+              className="w-12 h-12 object-contain"
+            />
             <div>
-              <span className="text-xl font-bold font-orbitron">
+              <span className="text-2xl font-bold font-orbitron text-white">
                 NANI<span className="text-[#E53935]">TECH</span>
               </span>
-              <span className="text-xs text-[#00E5FF] block -mt-1 font-orbitron">DevShop</span>
+              <span className="text-sm text-[#00E5FF] block -mt-1 font-orbitron">DevShop</span>
             </div>
-          </motion.div>
+            </motion.div>
+          </Link>
           
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, idx) => (
+          {/* Right side navigation and CTA */}
+          <div className="flex items-center space-x-8">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-10">
+              {navItems.map((item, idx) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`relative px-3 py-2 transition-all duration-300 font-semibold text-base tracking-wide hover:shadow-[0_0_20px_rgba(229,57,53,0.5)] hover:shadow-red-500/50 ${
+                    location.pathname === item.href 
+                      ? 'text-[#E53935]' 
+                      : 'text-[#00E5FF] hover:text-[#E53935]'
+                  }`}
+                >
+                  <motion.span
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.name}
+                  </motion.span>
+                </Link>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <Link to="/contact">
               <motion.button
-                key={item.name}
-                onClick={() => scrollToSection(item.href)}
-                className="relative text-[#EAEAEA]/70 hover:text-[#00E5FF] transition-all duration-300 font-medium"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
+                className="hidden md:block px-6 py-2 btn-primary rounded-lg font-semibold text-sm transition-all duration-300"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
                 whileHover={{ scale: 1.05 }}
               >
-                {item.name}
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00E5FF] to-transparent"
-                  initial={{ scaleX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
+                Book Demo
               </motion.button>
-            ))}
+            </Link>
           </div>
-
-          {/* CTA Button */}
-          <motion.button
-            className="hidden md:block px-6 py-2 btn-primary rounded-lg font-semibold text-sm transition-all duration-300"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            whileHover={{ scale: 1.05 }}
-            onClick={() => scrollToSection('#contact')}
-          >
-            Book Demo
-          </motion.button>
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -120,32 +120,43 @@ const Navigation = () => {
         >
           <div className="py-4 space-y-4 border-t border-[#00E5FF]/20 mt-4">
             {navItems.map((item, idx) => (
-              <motion.button
+              <Link
                 key={item.name}
-                onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left text-[#EAEAEA]/70 hover:text-[#00E5FF] transition-colors py-2 font-medium"
-                initial={{ opacity: 0, x: -20 }}
+                to={item.href}
+                onClick={closeMobileMenu}
+                className={`block w-full text-left px-3 py-2 transition-all duration-300 font-semibold text-base tracking-wide hover:shadow-[0_0_20px_rgba(229,57,53,0.5)] hover:shadow-red-500/50 ${
+                  location.pathname === item.href 
+                    ? 'text-[#E53935]' 
+                    : 'text-[#00E5FF] hover:text-[#E53935]'
+                }`}
+              >
+                <motion.span
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ 
+                    opacity: isMobileMenuOpen ? 1 : 0,
+                    x: isMobileMenuOpen ? 0 : -20
+                  }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {item.name}
+                </motion.span>
+              </Link>
+            ))}
+            <Link to="/contact" onClick={closeMobileMenu}>
+              <motion.button
+                className="w-full mt-4 px-6 py-3 btn-primary rounded-lg font-semibold text-sm"
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ 
                   opacity: isMobileMenuOpen ? 1 : 0,
-                  x: isMobileMenuOpen ? 0 : -20
+                  y: isMobileMenuOpen ? 0 : 20
                 }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: 0.3 }}
               >
-                {item.name}
+                Book Demo
               </motion.button>
-            ))}
-            <motion.button
-              className="w-full mt-4 px-6 py-3 btn-primary rounded-lg font-semibold text-sm"
-              onClick={() => scrollToSection('#contact')}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: isMobileMenuOpen ? 1 : 0,
-                y: isMobileMenuOpen ? 0 : 20
-              }}
-              transition={{ delay: 0.3 }}
-            >
-              Book Demo
-            </motion.button>
+            </Link>
           </div>
         </motion.div>
       </div>

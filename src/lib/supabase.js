@@ -1,11 +1,24 @@
-import { createClient } from '@supabase/supabase-js'
+// Legacy Supabase configuration - DEPRECATED
+// Please use the new consolidated module: ./supabase-module.js
+// This file is kept for backward compatibility
 
-// For demo purposes, using placeholder values
-// In production, these would be environment variables
-const supabaseUrl = 'https://your-project.supabase.co'
-const supabaseAnonKey = 'your-anon-key'
+// Import the singleton instance from the main module to avoid multiple instances
+export { supabase } from './supabase-module.js'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Re-export from the new consolidated module for backward compatibility
+export { 
+  supabase as supabaseClient,
+  fetchPublishedProjects,
+  ProjectSearchEngine,
+  RecommendationEngine,
+  getUserProfile,
+  canUserPerform,
+  PERMISSIONS,
+  getSignedImageUrl,
+  signedUrlCache,
+  projectCache,
+  userCache
+} from './supabase-module.js'
 
 // Database schema for NANI TECH DevShop
 export const createTables = async () => {

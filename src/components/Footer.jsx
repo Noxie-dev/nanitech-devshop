@@ -97,20 +97,17 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             {/* Logo */}
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="relative w-12 h-12">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0066CC] to-[#E53935] rounded-full opacity-40 blur-md"></div>
-                <div className="relative w-full h-full rounded-full bg-gradient-to-r from-[#0066CC] via-transparent to-[#E53935] p-0.5">
-                  <div className="w-full h-full bg-[#0C0F16] rounded-full flex items-center justify-center border border-[#00E5FF]/30">
-                    <span className="text-[#00E5FF] font-bold text-xs font-orbitron">NT</span>
-                  </div>
-                </div>
-              </div>
+            <div className="flex items-center space-x-4 mb-6">
+              <img 
+                src="/header-logo.png" 
+                alt="NaniTeck DevShop Logo" 
+                className="w-12 h-12 object-contain"
+              />
               <div>
-                <span className="text-xl font-bold font-orbitron">
+                <span className="text-2xl font-bold font-orbitron text-white">
                   NANI<span className="text-[#E53935]">TECH</span>
                 </span>
-                <span className="text-xs text-[#00E5FF] block -mt-1 font-orbitron">DevShop</span>
+                <span className="text-sm text-[#00E5FF] block -mt-1 font-orbitron">DevShop</span>
               </div>
             </div>
 

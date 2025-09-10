@@ -12,7 +12,8 @@ import {
   Github,
   Linkedin,
   Twitter,
-  Mail
+  Mail,
+  User
 } from 'lucide-react';
 
 const AboutSection = () => {
