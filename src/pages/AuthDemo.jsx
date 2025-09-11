@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/auth/AuthModal';
@@ -18,6 +18,16 @@ const AuthDemo = () => {
   const { user, is2FAEnabled, is2FAVerified, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login');
+
+  // Check URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    if (mode === 'register') {
+      setAuthMode('register');
+      setShowAuthModal(true);
+    }
+  }, []);
 
   // Check if Supabase is configured
   const isSupabaseConfigured = import.meta.env.VITE_SUPABASE_URL && 

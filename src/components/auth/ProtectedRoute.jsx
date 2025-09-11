@@ -45,14 +45,22 @@ const ProtectedRoute = ({ children, require2FA = false }) => {
             Access Denied
           </h2>
           <p className="text-[#EAEAEA]/70 mb-6">
-            You need to be signed in to access this page. Please sign in to continue.
+            You need to be signed in to access this page. Please sign in or create an account to continue.
           </p>
-          <button
-            onClick={() => window.location.href = '/login'}
-            className="px-8 py-3 bg-gradient-to-r from-[#00E5FF] to-[#0066CC] text-white rounded-lg font-semibold hover:scale-105 transition-transform"
-          >
-            Sign In
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => window.location.href = '/auth-demo'}
+              className="px-8 py-3 bg-gradient-to-r from-[#00E5FF] to-[#0066CC] text-white rounded-lg font-semibold hover:scale-105 transition-transform"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => window.location.href = '/auth-demo?mode=register'}
+              className="px-8 py-3 bg-gradient-to-r from-[#E53935] to-[#CC0000] text-white rounded-lg font-semibold hover:scale-105 transition-transform"
+            >
+              Sign Up
+            </button>
+          </div>
         </motion.div>
       </div>
     );

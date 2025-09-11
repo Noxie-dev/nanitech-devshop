@@ -174,7 +174,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister, onSwitchToReset }) => {
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-1 gap-3">
             <button
               onClick={() => handleProviderLogin('google')}
               disabled={isLoading || loading}
@@ -183,13 +183,15 @@ const LoginForm = ({ onSuccess, onSwitchToRegister, onSwitchToReset }) => {
               <Chrome className="w-5 h-5" />
               Google
             </button>
+            {/* GitHub OAuth temporarily disabled - enable in Supabase Dashboard first */}
             <button
               onClick={() => handleProviderLogin('github')}
-              disabled={isLoading || loading}
-              className="w-full py-3 px-4 bg-[#1C1F27] border border-[#2A2D3A] rounded-lg text-[#EAEAEA] hover:border-[#00E5FF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              disabled={true}
+              className="w-full py-3 px-4 bg-[#1C1F27] border border-[#2A2D3A] rounded-lg text-[#EAEAEA]/40 cursor-not-allowed flex items-center justify-center gap-2"
+              title="GitHub OAuth not enabled in Supabase. See GITHUB_OAUTH_SETUP.md for instructions."
             >
               <Github className="w-5 h-5" />
-              GitHub
+              GitHub (Not Configured)
             </button>
           </div>
         </div>
