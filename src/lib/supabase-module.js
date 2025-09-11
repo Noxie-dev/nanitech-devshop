@@ -354,6 +354,404 @@ export class RecommendationEngine {
 }
 
 // ===========================
+// Project Queue Management
+// ===========================
+
+export async function addProjectToQueue(projectId, jobType, payload = {}) {
+  try {
+    const { data, error } = await supabase
+      .from('project_queue')
+      .insert([{
+        project_id: projectId,
+        job_type: jobType,
+        payload: payload,
+        status: 'pending'
+      }])
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error adding project to queue:', error);
+    return { data: null, error };
+  }
+}
+
+export async function getProjectQueue(status = null) {
+  try {
+    let query = supabase
+      .from('project_queue')
+      .select(`
+        *,
+        projects:project_id (
+          id,
+          title,
+          status,
+          createdBy
+        )
+      `)
+      .order('created_at', { ascending: false });
+    
+    if (status) {
+      query = query.eq('status', status);
+    }
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching project queue:', error);
+    return { data: null, error };
+  }
+}
+
+export async function updateQueueJobStatus(jobId, status, lastError = null) {
+  try {
+    const { data, error } = await supabase
+      .from('project_queue')
+      .update({
+        status,
+        last_error: lastError,
+        last_attempt_at: new Date().toISOString(),
+        attempts: supabase.raw('attempts + 1')
+      })
+      .eq('id', jobId)
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error updating queue job status:', error);
+    return { data: null, error };
+  }
+}
+
+// ===========================
+// Deleted Projects Management
+// ===========================
+
+export async function getDeletedProjects() {
+  try {
+    const { data, error } = await supabase
+      .from('deleted_projects')
+      .select(`
+        *,
+        deleted_by_user:deleted_by (
+          id,
+          email,
+          user_metadata
+        )
+      `)
+      .order('deleted_at', { ascending: false });
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching deleted projects:', error);
+    return { data: null, error };
+  }
+}
+
+export async function restoreProject(deletedProjectId) {
+  try {
+    // Get the deleted project data
+    const { data: deletedProject, error: fetchError } = await supabase
+      .from('deleted_projects')
+      .select('original_data')
+      .eq('id', deletedProjectId)
+      .single();
+    
+    if (fetchError) throw fetchError;
+    
+    // Restore the project
+    const { data, error } = await supabase
+      .from('projects')
+      .insert([deletedProject.original_data])
+      .select();
+    
+    if (error) throw error;
+    
+    // Remove from deleted_projects
+    await supabase
+      .from('deleted_projects')
+      .delete()
+      .eq('id', deletedProjectId);
+    
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error restoring project:', error);
+    return { data: null, error };
+  }
+}
+
+export async function permanentlyDeleteProject(deletedProjectId) {
+  try {
+    const { data, error } = await supabase
+      .from('deleted_projects')
+      .delete()
+      .eq('id', deletedProjectId)
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error permanently deleting project:', error);
+    return { data: null, error };
+  }
+}
+
+// ===========================
+// Image Metadata Management
+// ===========================
+
+export async function uploadProjectImage(projectId, file, metadata = {}) {
+  try {
+    // Generate unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${projectId}/${Date.now()}.${fileExt}`;
+    const filePath = `project-images/${fileName}`;
+    
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('project-images')
+      .upload(filePath, file);
+    
+    if (uploadError) throw uploadError;
+    
+    // Save metadata to database
+    const { data, error } = await supabase
+      .from('image_metadata')
+      .insert([{
+        project_id: projectId,
+        uploader_id: (await supabase.auth.getUser()).data.user?.id,
+        image_path: filePath,
+        alt_text: metadata.altText || '',
+        caption: metadata.caption || '',
+        file_size_bytes: file.size,
+        mime_type: file.type,
+        position_x: metadata.positionX || 0,
+        position_y: metadata.positionY || 0,
+        scale: metadata.scale || 1.0,
+        rotation: metadata.rotation || 0,
+        crop_data: metadata.cropData || null,
+        is_primary: metadata.isPrimary || false,
+        sort_order: metadata.sortOrder || 0
+      }])
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error uploading project image:', error);
+    return { data: null, error };
+  }
+}
+
+export async function getProjectImages(projectId) {
+  try {
+    const { data, error } = await supabase
+      .from('image_metadata')
+      .select('*')
+      .eq('project_id', projectId)
+      .order('sort_order', { ascending: true });
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching project images:', error);
+    return { data: null, error };
+  }
+}
+
+export async function updateImageMetadata(imageId, updates) {
+  try {
+    const { data, error } = await supabase
+      .from('image_metadata')
+      .update(updates)
+      .eq('id', imageId)
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error updating image metadata:', error);
+    return { data: null, error };
+  }
+}
+
+export async function deleteProjectImage(imageId) {
+  try {
+    // Get image path first
+    const { data: imageData, error: fetchError } = await supabase
+      .from('image_metadata')
+      .select('image_path')
+      .eq('id', imageId)
+      .single();
+    
+    if (fetchError) throw fetchError;
+    
+    // Delete from storage
+    const { error: storageError } = await supabase.storage
+      .from('project-images')
+      .remove([imageData.image_path]);
+    
+    if (storageError) throw storageError;
+    
+    // Delete metadata
+    const { data, error } = await supabase
+      .from('image_metadata')
+      .delete()
+      .eq('id', imageId)
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error deleting project image:', error);
+    return { data: null, error };
+  }
+}
+
+// ===========================
+// Settings Management
+// ===========================
+
+export async function getSettings(category = null, publicOnly = false) {
+  try {
+    let query = supabase
+      .from('settings')
+      .select('*')
+      .order('category', { ascending: true });
+    
+    if (category) {
+      query = query.eq('category', category);
+    }
+    
+    if (publicOnly) {
+      query = query.eq('is_public', true);
+    }
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    
+    // Convert to key-value object
+    const settings = {};
+    data.forEach(setting => {
+      settings[setting.key] = setting.value;
+    });
+    
+    return { data: settings, error: null };
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    return { data: null, error };
+  }
+}
+
+export async function updateSetting(key, value, description = null) {
+  try {
+    const { data, error } = await supabase
+      .from('settings')
+      .update({
+        value: typeof value === 'string' ? JSON.parse(value) : value,
+        description: description,
+        last_updated_by: (await supabase.auth.getUser()).data.user?.id
+      })
+      .eq('key', key)
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error updating setting:', error);
+    return { data: null, error };
+  }
+}
+
+export async function createSetting(key, value, description, isPublic = false, category = 'general') {
+  try {
+    const { data, error } = await supabase
+      .from('settings')
+      .insert([{
+        key,
+        value: typeof value === 'string' ? JSON.parse(value) : value,
+        description,
+        is_public: isPublic,
+        category,
+        last_updated_by: (await supabase.auth.getUser()).data.user?.id
+      }])
+      .select();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error creating setting:', error);
+    return { data: null, error };
+  }
+}
+
+// ===========================
+// Project Categories Management
+// ===========================
+
+export async function getProjectCategories() {
+  try {
+    const { data, error } = await supabase
+      .from('project_categories')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching project categories:', error);
+    return { data: null, error };
+  }
+}
+
+export async function getTechCategories(parentId = null) {
+  try {
+    let query = supabase
+      .from('tech_categories')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    
+    if (parentId) {
+      query = query.eq('parent_id', parentId);
+    } else {
+      query = query.is('parent_id', null);
+    }
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching tech categories:', error);
+    return { data: null, error };
+  }
+}
+
+// ===========================
+// Dashboard Statistics
+// ===========================
+
+export async function getDashboardStats() {
+  try {
+    const { data, error } = await supabase
+      .from('dashboard_overview')
+      .select('*')
+      .single();
+    
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    return { data: null, error };
+  }
+}
+
+// ===========================
 // Main Data Fetching
 // ===========================
 

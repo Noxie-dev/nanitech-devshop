@@ -120,3 +120,4 @@ The app will automatically use mock data if Supabase is not configured, so you c
 
 **The app is now ready to use! 🎉**
 
+

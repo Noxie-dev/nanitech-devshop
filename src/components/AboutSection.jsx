@@ -8,12 +8,7 @@ import {
   Code2,
   Rocket,
   Shield,
-  Zap,
-  Github,
-  Linkedin,
-  Twitter,
-  Mail,
-  User
+  Zap
 } from 'lucide-react';
 
 const AboutSection = () => {
@@ -47,60 +42,6 @@ const AboutSection = () => {
     }
   ];
 
-  const team = [
-    {
-      name: "Sarah Chen",
-      role: "Founder & CEO",
-      bio: "Full-stack developer with 8+ years experience in AI and machine learning integration.",
-      image: "/api/placeholder/300/300",
-      skills: ["AI/ML", "Python", "React", "Leadership"],
-      social: {
-        github: "#",
-        linkedin: "#",
-        twitter: "#",
-        email: "sarah@nanitech.dev"
-      }
-    },
-    {
-      name: "Marcus Johnson",
-      role: "CTO & Lead Developer",
-      bio: "Expert in cloud architecture and DevOps with a passion for scalable solutions.",
-      image: "/api/placeholder/300/300",
-      skills: ["Cloud Architecture", "DevOps", "Node.js", "Docker"],
-      social: {
-        github: "#",
-        linkedin: "#",
-        twitter: "#",
-        email: "marcus@nanitech.dev"
-      }
-    },
-    {
-      name: "Alex Rivera",
-      role: "Senior Frontend Developer",
-      bio: "UI/UX specialist focused on creating beautiful and intuitive user experiences.",
-      image: "/api/placeholder/300/300",
-      skills: ["React", "TypeScript", "UI/UX", "Animation"],
-      social: {
-        github: "#",
-        linkedin: "#",
-        twitter: "#",
-        email: "alex@nanitech.dev"
-      }
-    },
-    {
-      name: "Dr. Emily Watson",
-      role: "Security Consultant",
-      bio: "Cybersecurity expert ensuring our solutions meet the highest security standards.",
-      image: "/api/placeholder/300/300",
-      skills: ["Cybersecurity", "Penetration Testing", "Compliance", "Risk Assessment"],
-      social: {
-        github: "#",
-        linkedin: "#",
-        twitter: "#",
-        email: "emily@nanitech.dev"
-      }
-    }
-  ];
 
   return (
     <section id="about" className="py-20 relative">
@@ -229,95 +170,6 @@ const AboutSection = () => {
           </div>
         </motion.div>
 
-        {/* Team */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h3 className="text-3xl md:text-4xl font-bold text-center mb-12 font-orbitron gradient-text-red">
-            Meet Our Team
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, idx) => (
-              <motion.div
-                key={idx}
-                className="glass-card rounded-xl overflow-hidden hover:border-[#00E5FF]/50 transition-all duration-300 group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ y: -10 }}
-              >
-                {/* Profile Image */}
-                <div className="relative h-64 bg-gradient-to-br from-[#1C1F27] to-[#14273D] flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#E53935] flex items-center justify-center">
-                    <User className="w-12 h-12 text-white" />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0C0F16]/80 to-transparent"></div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h4 className="text-xl font-semibold mb-1 text-[#EAEAEA] font-orbitron">
-                    {member.name}
-                  </h4>
-                  <p className="text-[#00E5FF] text-sm mb-3 font-medium">
-                    {member.role}
-                  </p>
-                  <p className="text-[#EAEAEA]/70 text-sm mb-4 leading-relaxed">
-                    {member.bio}
-                  </p>
-
-                  {/* Skills */}
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {member.skills.map((skill, skillIdx) => (
-                      <span
-                        key={skillIdx}
-                        className="px-2 py-1 bg-[#1C1F27]/50 border border-[#00E5FF]/20 rounded text-xs text-[#00E5FF]"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Social Links */}
-                  <div className="flex justify-center gap-3">
-                    <motion.a
-                      href={member.social.github}
-                      className="p-2 text-[#EAEAEA]/60 hover:text-[#00E5FF] transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <Github className="w-4 h-4" />
-                    </motion.a>
-                    <motion.a
-                      href={member.social.linkedin}
-                      className="p-2 text-[#EAEAEA]/60 hover:text-[#00E5FF] transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <Linkedin className="w-4 h-4" />
-                    </motion.a>
-                    <motion.a
-                      href={member.social.twitter}
-                      className="p-2 text-[#EAEAEA]/60 hover:text-[#00E5FF] transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <Twitter className="w-4 h-4" />
-                    </motion.a>
-                    <motion.a
-                      href={`mailto:${member.social.email}`}
-                      className="p-2 text-[#EAEAEA]/60 hover:text-[#00E5FF] transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <Mail className="w-4 h-4" />
-                    </motion.a>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
 
         {/* CTA */}
         <motion.div
