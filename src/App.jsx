@@ -8,16 +8,20 @@ import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
 import Dashboard from './components/Dashboard';
 import { useAnalytics } from './hooks/useAnalytics';
+import { AuthProvider } from './contexts/AuthContext';
 import './App.css';
 
 // Lazy load heavy components
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const AuthDemo = lazy(() => import('./pages/AuthDemo'));
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }
 
@@ -29,18 +33,30 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/services" element={
-          <Suspense fallback={
-            <div className="min-h-screen bg-[#0C0F16] flex items-center justify-center">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00E5FF] mx-auto mb-4"></div>
-                <p className="text-[#EAEAEA]">Loading Services...</p>
+          <Route path="/services" element={
+            <Suspense fallback={
+              <div className="min-h-screen bg-[#0C0F16] flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00E5FF] mx-auto mb-4"></div>
+                  <p className="text-[#EAEAEA]">Loading Services...</p>
+                </div>
               </div>
-            </div>
-          }>
-            <ServicesPage />
-          </Suspense>
-        } />
+            }>
+              <ServicesPage />
+            </Suspense>
+          } />
+          <Route path="/auth-demo" element={
+            <Suspense fallback={
+              <div className="min-h-screen bg-[#0C0F16] flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00E5FF] mx-auto mb-4"></div>
+                  <p className="text-[#EAEAEA]">Loading Auth Demo...</p>
+                </div>
+              </div>
+            }>
+              <AuthDemo />
+            </Suspense>
+          } />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/dashboard" element={<Dashboard />} />

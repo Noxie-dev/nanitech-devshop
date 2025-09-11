@@ -1,9 +1,11 @@
 import React, { useState, useEffect, Suspense } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import ProtectedRoute from './auth/ProtectedRoute';
 import ProjectCard from './ProjectCard';
 import QueueManagementView from './QueueManagementView';
 import SettingsView from './SettingsView';
 import useDebounce from '../hooks/useDebounce';
-import { PlusCircle, Search, Filter, Grid, List, Settings } from 'lucide-react';
+import { PlusCircle, Search, Filter, Grid, List, Settings, User, LogOut, Shield } from 'lucide-react';
 
 // Lazy load heavy components
 const ProjectCreationWizard = React.lazy(() => import('./ProjectCreationWizard'));
@@ -20,6 +22,7 @@ const TABS = [
 ];
 
 const DashboardView = () => {
+  const { user, signOut, is2FAEnabled } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -217,24 +220,61 @@ const DashboardView = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 bg-gray-900 min-h-screen text-white">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Projects Dashboard</h1>
-          <p className="text-sm sm:text-base text-gray-400">
-            Manage your projects, track progress, and showcase your work
-          </p>
-        </div>
-        <button
-          onClick={() => setIsWizardOpen(true)}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 sm:px-6 rounded-lg transition-colors"
-        >
-          <PlusCircle size={20} />
-          <span className="hidden sm:inline">Add Project</span>
-          <span className="sm:hidden">Add</span>
-        </button>
-      </header>
+    <ProtectedRoute require2FA={true}>
+      <div className="p-4 sm:p-6 md:p-8 bg-[#0C0F16] min-h-screen text-[#EAEAEA]">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#EAEAEA] font-orbitron">
+                Projects Dashboard
+              </h1>
+              {is2FAEnabled && (
+                <div className="flex items-center gap-2 px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
+                  <Shield className="w-4 h-4 text-green-500" />
+                  <span className="text-sm text-green-400">2FA Enabled</span>
+                </div>
+              )}
+            </div>
+            <p className="text-sm sm:text-base text-[#EAEAEA]/70">
+              Manage your projects, track progress, and showcase your work
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <p className="text-sm font-medium text-[#EAEAEA]">
+                  {user?.user_metadata?.full_name || user?.email}
+                </p>
+                <p className="text-xs text-[#EAEAEA]/60">
+                  {user?.email}
+                </p>
+              </div>
+              
+              <div className="w-8 h-8 bg-gradient-to-r from-[#00E5FF] to-[#E53935] rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              
+              <button
+                onClick={signOut}
+                className="p-2 text-[#EAEAEA]/60 hover:text-red-400 transition-colors"
+                title="Sign Out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <button
+              onClick={() => setIsWizardOpen(true)}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#00E5FF] to-[#0066CC] hover:scale-105 text-white font-medium py-3 px-4 sm:px-6 rounded-lg transition-transform"
+            >
+              <PlusCircle size={20} />
+              <span className="hidden sm:inline">Add Project</span>
+              <span className="sm:hidden">Add</span>
+            </button>
+          </div>
+        </header>
 
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4 mb-6">
@@ -328,7 +368,8 @@ const DashboardView = () => {
           />
         </Suspense>
       )}
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 };
 

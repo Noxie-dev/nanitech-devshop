@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut, LogIn } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import AuthModal from './auth/AuthModal';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,11 +28,23 @@ const Navigation = () => {
     { name: 'Services', href: '/services' },
     { name: 'Projects', href: '/projects' },
     { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Auth Demo', href: '/auth-demo' },
     { name: 'Contact', href: '/contact' }
   ];
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleAuthClick = (mode = 'login') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+    closeMobileMenu();
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    closeMobileMenu();
   };
 
   return (
@@ -86,17 +103,54 @@ const Navigation = () => {
               ))}
             </div>
 
-            {/* CTA Button */}
-            <Link to="/contact">
-              <motion.button
-                className="hidden md:block px-6 py-2 btn-primary rounded-lg font-semibold text-sm transition-all duration-300"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                Book Demo
-              </motion.button>
-            </Link>
+            {/* Auth Section */}
+            <div className="hidden md:flex items-center space-x-4">
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 text-[#EAEAEA]">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">
+                      {user.user_metadata?.full_name || user.email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center space-x-1 px-3 py-2 text-[#EAEAEA]/70 hover:text-red-400 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span className="text-sm">Sign Out</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => handleAuthClick('login')}
+                    className="flex items-center space-x-1 px-3 py-2 text-[#EAEAEA]/70 hover:text-[#00E5FF] transition-colors"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span className="text-sm">Sign In</span>
+                  </button>
+                  <button
+                    onClick={() => handleAuthClick('register')}
+                    className="px-4 py-2 bg-gradient-to-r from-[#00E5FF] to-[#0066CC] text-white rounded-lg font-semibold text-sm hover:scale-105 transition-transform"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+              
+              {/* CTA Button */}
+              <Link to="/contact">
+                <motion.button
+                  className="px-6 py-2 btn-primary rounded-lg font-semibold text-sm transition-all duration-300"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Book Demo
+                </motion.button>
+              </Link>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -146,6 +200,43 @@ const Navigation = () => {
                 </motion.span>
               </Link>
             ))}
+            {/* Mobile Auth Section */}
+            <div className="mt-4 pt-4 border-t border-[#00E5FF]/20">
+              {user ? (
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2 text-[#EAEAEA] px-3 py-2">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">
+                      {user.user_metadata?.full_name || user.email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-[#EAEAEA]/70 hover:text-red-400 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span className="text-sm">Sign Out</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <button
+                    onClick={() => handleAuthClick('login')}
+                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-[#EAEAEA]/70 hover:text-[#00E5FF] transition-colors"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span className="text-sm">Sign In</span>
+                  </button>
+                  <button
+                    onClick={() => handleAuthClick('register')}
+                    className="w-full px-4 py-3 bg-gradient-to-r from-[#00E5FF] to-[#0066CC] text-white rounded-lg font-semibold text-sm hover:scale-105 transition-transform"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+            </div>
+            
             <Link to="/contact" onClick={closeMobileMenu}>
               <motion.button
                 className="w-full mt-4 px-6 py-3 btn-primary rounded-lg font-semibold text-sm"
@@ -162,6 +253,13 @@ const Navigation = () => {
           </div>
         </motion.div>
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode={authMode}
+      />
     </nav>
   );
 };

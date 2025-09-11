@@ -19,11 +19,11 @@ class SupabaseService {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key-here';
       
-      // Only show warning if using placeholder values and not in development mode
-      if ((supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key-here') && 
-          import.meta.env.VITE_APP_ENV !== 'development') {
-        console.warn('⚠️ Supabase environment variables not configured. Using placeholder values.');
-        console.warn('Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env.local file');
+      // Check if Supabase is properly configured
+      if (supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key-here') {
+        console.error('❌ Supabase environment variables not configured.');
+        console.error('Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env.local file');
+        throw new Error('Supabase configuration required');
       }
       
       SupabaseService.instance = new SupabaseService({
@@ -194,20 +194,6 @@ export async function getUserProfile(userId) {
   if (cachedProfile) return cachedProfile;
 
   try {
-    // Check if Supabase is properly configured
-    if (!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL === 'https://your-project.supabase.co') {
-      console.warn('Supabase not configured, returning mock user profile');
-      const mockProfile = {
-        id: userId || 'demo-user',
-        role: 'admin',
-        permissions: ROLE_PERMISSIONS.admin,
-        fullName: 'Demo User',
-        avatarUrl: null
-      };
-      userCache.set(userId || 'demo-user', mockProfile);
-      return mockProfile;
-    }
-
     const { data, error } = await supabase.from("profiles").select("id, role, fullName, avatarUrl").eq("id", userId).single();
     if (error) throw error;
     if (!data) return null;
@@ -761,45 +747,6 @@ export async function fetchPublishedProjects() {
   if (cached) return cached;
 
   try {
-    // Check if Supabase is properly configured
-    if (!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL === 'https://your-project.supabase.co') {
-      console.warn('Supabase not configured, returning mock data');
-      const mockProjects = [
-        {
-          id: '1',
-          title: 'Tic-Tac-Toe AI',
-          description: 'Modern Tic-Tac-Toe game with AI opponents and beautiful UI',
-          githubUrl: 'https://github.com/Noxie-dev/Tic-Tech-Toe-AI-To-The-Bone',
-          liveUrl: '#',
-          images: ['/TickTechToe-media/Screenshot 2025-09-10 at 17.54.41.png'],
-          techStack: ['React', 'TypeScript', 'Vite', 'Tailwind CSS'],
-          createdBy: 'demo-user',
-          status: 'published',
-          featured: true,
-          metadata: {},
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: '2',
-          title: 'E-Commerce Platform',
-          description: 'Full-stack e-commerce solution with payment integration',
-          githubUrl: 'https://github.com/example/ecommerce',
-          liveUrl: 'https://example-ecommerce.com',
-          images: ['/hero-image.png'],
-          techStack: ['Next.js', 'Node.js', 'PostgreSQL', 'Stripe'],
-          createdBy: 'demo-user',
-          status: 'published',
-          featured: false,
-          metadata: {},
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ];
-      projectCache.set(cacheKey, mockProjects);
-      return mockProjects;
-    }
-
     const { data, error } = await supabase.from("projects").select("*").eq("status", "published");
     if (error) handleSupabaseError(error, 'fetchPublishedProjects');
     
