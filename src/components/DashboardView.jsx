@@ -221,9 +221,9 @@ const DashboardView = () => {
 
   return (
     <ProtectedRoute require2FA={true}>
-      <div className="p-4 sm:p-6 md:p-8 bg-[#0C0F16] min-h-screen text-[#EAEAEA]">
+      <div className="pt-20 p-4 sm:p-6 md:p-8 bg-[#0C0F16] min-h-screen text-[#EAEAEA]">
         {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+        <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-10 gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-4 mb-2">
               <h1 className="text-2xl sm:text-3xl font-bold text-[#EAEAEA] font-orbitron">
@@ -277,7 +277,7 @@ const DashboardView = () => {
         </header>
 
       {/* Search and Filters */}
-      <div className="flex flex-col lg:flex-row gap-4 mb-6">
+      <div className="flex flex-col lg:flex-row gap-4 mb-8">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
@@ -325,7 +325,7 @@ const DashboardView = () => {
       </div>
 
       {/* Tabbed Interface */}
-      <div className="border-b border-gray-700 mb-6">
+      <div className="border-b border-gray-700 mb-8">
         <nav className="-mb-px flex space-x-4 sm:space-x-6 lg:space-x-8 overflow-x-auto pb-1">
           {TABS.map(tab => (
             <button
